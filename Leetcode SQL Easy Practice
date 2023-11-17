@@ -1,0 +1,31 @@
+Leetcode Database Easy
+
+- 1517. Write a query to find people with valid email addresses (Using MySQL)
+SELECT user_id, name, mail 
+FROM users
+WHERE mail REGEXP '^[a-zA-Z][a-zA-Z0-9_.-]*@leetcode[.]com'
+
+- 1581. Write a query to find customers who visited the shopping mall but didn't make any purchases (Using MS SQL Server)
+SELECT customer_id, count(*) AS count_no_trans
+FROM Visits v
+LEFT JOIN Transactions t on v.visit_id = t.visit_id
+WHERE transaction_id IS NULL
+GROUP BY customer_id
+
+- 1587. Write a query to find people who have a bank account balance over 10000 (Using MySQL)
+SELECT name, SUM(amount) as balance
+FROM Users
+JOIN Transactions using (account)
+GROUP BY account
+HAVING balance > 10000
+
+- 1667. Write a query to uppercase the first character of users' names and lowercase the rest (Using MS SQL Server)
+SELECT user_id, CONCAT(UPPER(LEFT(name,1)), LOWER(RIGHT(name, LEN(name)-1))) as name
+FROM Users
+ORDER BY user_id
+
+- 1693. Write a query to find how many unique lead_id and partner_id each product sold per day (Using MS SQL Server)
+SELECT date_id, make_name, COUNT(DISTINCT lead_id) AS unique_leads, COUNT(DISTINCT partner_id) AS unique_partners
+FROM DailySales
+GROUP BY date_id, make_name
+
