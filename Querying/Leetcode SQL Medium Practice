@@ -1,0 +1,45 @@
+Leetcode Database Medium
+
+-- 178. Write a query to order scores from highest to lowest (Using MS SQL Server)
+SELECT score, DENSE_RANK() OVER(ORDER BY score DESC) AS rank
+FROM scores
+ORDER BY score DESC
+
+-- 184. Write a query to find the highest salary within each department (Using MySQL)
+SELECT Department, Employee, Salary
+FROM (
+SELECT d.name as Department, e.name as Employee, Salary,
+RANK() OVER(PARTITION BY departmentId ORDER BY salary DESC) AS rk
+FROM Employee e
+JOIN Department d on e.departmentId = d.id) AS tb
+WHERE rk = 1
+
+-- 1045. Write a query to find customers who purchased all the products (Using MySQL)
+SELECT customer_id
+FROM Customer
+GROUP BY customer_id
+HAVING COUNT(DISTINCT product_key) = (SELECT COUNT(product_key) FROM Product)
+
+-- 1204. Write a query to find the last person who can board a bus so that the weight wouldn't go beyond 1000 kilograms (Using MS SQL Server)
+WITH Table1 AS (
+SELECT turn, person_name, SUM(weight) OVER(ORDER BY turn ) AS total_weight
+FROM Queue)
+
+SELECT person_name
+FROM Table1
+WHERE total_weight = (SELECT MAX(total_weight) FROM Table1 WHERE total_weight<=1000)
+
+-- 1907. Write a query to categorize salaries into three ranges and count the number of accounts falling into each range. Return 0 if no accounts in such category (Using MySQL)
+SELECT 'Low Salary' AS category,
+IFNULL(SUM(CASE WHEN income < 20000 THEN 1 END),0) AS accounts_count
+FROM Accounts
+UNION ALL
+SELECT 'Average Salary' AS category,
+IFNULL(SUM(CASE WHEN income >= 20000 AND income <= 50000 THEN 1 END),0) AS accounts_count
+FROM Accounts
+UNION ALL
+SELECT 'High Salary' AS category,
+IFNULL(SUM(CASE WHEN income >50000 THEN 1 END),0) AS accounts_count
+FROM Accounts
+
+
