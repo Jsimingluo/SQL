@@ -1,0 +1,20 @@
+Leetcode Database Hard
+
+-- 185. Write a query to find all employees who have the top three unique salary within each department
+SELECT d.name AS Department, tb.name AS Employee, salary
+FROM Department d
+JOIN (
+SELECT id, name, salary, departmentid, DENSE_RANK() OVER(PARTITION BY departmentid ORDER BY salary DESC
+) AS rsa
+FROM Employee
+) tb ON d.id = tb.departmentid
+WHERE rsa IN (1,2,3)
+
+-- 262. Write a query to compute the cancellation rate of requests for unbanned drivers and users each day from 
+"2013-10-01" and "2013-10-03". Round the result to two decimal points
+SELECT request_at AS Day, ROUND(SUM(IF(status LIKE 'cancelled%', 1,0)) / COUNT(*),2) 'Cancellation Rate'
+FROM Trips
+WHERE client_id IN (SELECT users_id FROM users WHERE banned = 'No' AND role = 'client') 
+AND driver_id IN (SELECT users_id FROM users WHERE banned = 'No' AND role = 'driver') 
+AND request_at BETWEEN '2013-10-01' AND '2013-10-03'
+GROUP BY request_at
